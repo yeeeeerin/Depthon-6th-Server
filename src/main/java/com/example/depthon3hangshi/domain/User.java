@@ -1,14 +1,15 @@
 package com.example.depthon3hangshi.domain;
 
 import com.example.depthon3hangshi.dto.UserRequest;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.HashSet;
 import java.util.Set;
 
 @Entity
 @NoArgsConstructor
+@Getter
 public class User {
 
     @GeneratedValue
@@ -16,7 +17,7 @@ public class User {
     @Column(name = "user_id")
     private Long id;
 
-    @Column(nullable = false)
+    @Column(unique = true)
     private String name;
 
     @OneToMany(mappedBy = "user",cascade = CascadeType.ALL)
