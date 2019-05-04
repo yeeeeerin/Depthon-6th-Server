@@ -9,6 +9,8 @@ group = 'com.example'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '1.8'
 
+def queryDSLVersion = '4.2.1'
+
 configurations {
     compileOnly {
         extendsFrom annotationProcessor
@@ -30,4 +32,5 @@ dependencies {
 
     compile group: 'io.springfox', name: 'springfox-swagger2', version: '2.9.2'
     compile group: 'io.springfox', name: 'springfox-swagger-ui', version: '2.9.2'
+    
 }

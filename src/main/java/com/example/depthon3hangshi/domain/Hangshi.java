@@ -1,7 +1,9 @@
 package com.example.depthon3hangshi.domain;
 
 import com.example.depthon3hangshi.dto.HangshiRequest;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -10,6 +12,8 @@ import java.time.LocalDateTime;
 import java.util.Set;
 
 @Entity
+@Getter
+@Setter
 @NoArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
 public class Hangshi {
@@ -22,6 +26,8 @@ public class Hangshi {
     private String wordFirst;
     private String wordSecond;
     private String wordThird;
+
+    private Integer likeCount;
 
     @CreatedDate
     private LocalDateTime createdAt;
@@ -38,6 +44,7 @@ public class Hangshi {
         this.wordSecond = wordSecond;
         this.wordThird = wordThird;
         this.user = user;
+        likeCount = 0;
     }
 
 

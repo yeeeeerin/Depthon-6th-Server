@@ -2,20 +2,30 @@ package com.example.depthon3hangshi.service.Impl;
 
 import com.example.depthon3hangshi.domain.Hangshi;
 import com.example.depthon3hangshi.domain.LikeHangshi;
+import com.example.depthon3hangshi.domain.User;
 import com.example.depthon3hangshi.domain.WordCollector;
+import com.example.depthon3hangshi.dto.HangshiDto;
 import com.example.depthon3hangshi.dto.HangshiRequest;
 import com.example.depthon3hangshi.dto.HangshiResponse;
 import com.example.depthon3hangshi.dto.LikeRequest;
+import com.example.depthon3hangshi.exception.NotFoundUserException;
 import com.example.depthon3hangshi.repository.HangshiRepository;
 import com.example.depthon3hangshi.repository.LikeHangshiRepository;
 import com.example.depthon3hangshi.repository.UserRepository;
 import com.example.depthon3hangshi.service.HangshiService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class HangshiServiceImpl implements HangshiService {
 
     private final HangshiRepository hangshiRepository;
@@ -43,6 +53,39 @@ public class HangshiServiceImpl implements HangshiService {
 
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public List<HangshiDto> getHangshiByLike(Long userId, int page) {
+        Pageable pageable = PageRequest.of(page, 20);
+        User user = userRepository.findById(userId).orElseThrow(NotFoundUserException::new);
+        return hangshiRepository.findAllByOrderByLikeCountDesc(pageable).stream()
+                .map(hangshi -> {
+                    boolean like = false;
+                    if (likeRepository.findByHangshiAndUser(hangshi, user).isPresent()) {
+                        like = true;
+                    }
+                    log.info("hangshi - " + hangshi.getId());
+                    return HangshiDto.of(hangshi, like);
+                })
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<HangshiDto> getHangshiByDate(Long userId, int page) {
+        Pageable pageable = PageRequest.of(page, 20);
+        User user = userRepository.findById(userId).orElseThrow(NotFoundUserException::new);
+        return hangshiRepository.findAllByOrderByCreatedAtDesc(pageable).stream()
+                .map(hangshi -> {
+                    boolean like = false;
+                    if (likeRepository.findByHangshiAndUser(hangshi, user).isPresent()) {
+                        like = true;
+                    }
+                    log.info("hangshi - " + hangshi.getId());
+                    return HangshiDto.of(hangshi, like);
+                })
+                .collect(Collectors.toList());
+    }
+
 
     @Override
     @Transactional
@@ -55,6 +98,7 @@ public class HangshiServiceImpl implements HangshiService {
                         likeHangshi.setHangshi(hangshi);
                         likeHangshi.setUser(user);
                         likeRepository.save(likeHangshi);
+                        hangshi.setLikeCount(hangshi.getLikeCount() + 1);
                     });
 
                 }
@@ -69,6 +113,7 @@ public class HangshiServiceImpl implements HangshiService {
                     userRepository.findById(likeRequest.getUserId()).ifPresent(user -> {
                         likeRepository.findByHangshiAndUser(hangshi, user).ifPresent(like -> {
                             likeRepository.delete(like);
+                            hangshi.setLikeCount(hangshi.getLikeCount() - 1);
                         });
                     });
 
