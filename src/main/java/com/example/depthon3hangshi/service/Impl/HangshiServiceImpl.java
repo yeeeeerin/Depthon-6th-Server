@@ -71,6 +71,7 @@ public class HangshiServiceImpl implements HangshiService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<HangshiDto> getHangshiByDate(Long userId, int page) {
         Pageable pageable = PageRequest.of(page, 20);
         User user = userRepository.findById(userId).orElseThrow(NotFoundUserException::new);
