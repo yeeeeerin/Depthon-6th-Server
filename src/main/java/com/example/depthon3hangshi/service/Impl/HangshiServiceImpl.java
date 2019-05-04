@@ -8,6 +8,7 @@ import com.example.depthon3hangshi.dto.HangshiDto;
 import com.example.depthon3hangshi.dto.HangshiRequest;
 import com.example.depthon3hangshi.dto.HangshiResponse;
 import com.example.depthon3hangshi.dto.LikeRequest;
+import com.example.depthon3hangshi.exception.ExistLikeException;
 import com.example.depthon3hangshi.exception.NotFoundUserException;
 import com.example.depthon3hangshi.repository.HangshiRepository;
 import com.example.depthon3hangshi.repository.LikeHangshiRepository;
@@ -61,6 +62,7 @@ public class HangshiServiceImpl implements HangshiService {
         return hangshiRepository.findAllByOrderByLikeCountDesc(pageable).stream()
                 .map(hangshi -> {
                     boolean like = false;
+                    //내가 좋아요 했다면
                     if (likeRepository.findByHangshiAndUser(hangshi, user).isPresent()) {
                         like = true;
                     }
@@ -78,6 +80,7 @@ public class HangshiServiceImpl implements HangshiService {
         return hangshiRepository.findAllByOrderByCreatedAtDesc(pageable).stream()
                 .map(hangshi -> {
                     boolean like = false;
+                    //내가 좋아요 했다면
                     if (likeRepository.findByHangshiAndUser(hangshi, user).isPresent()) {
                         like = true;
                     }
@@ -95,6 +98,9 @@ public class HangshiServiceImpl implements HangshiService {
         hangshiRepository.findById(likeRequest.getHangshiId()).ifPresent(
                 hangshi -> {
                     userRepository.findById(likeRequest.getUserId()).ifPresent(user -> {
+                        //이미 라이크 했다면
+                        likeRepository.findByHangshiAndUser(hangshi, user).ifPresent(ExistLikeException::new);
+
                         LikeHangshi likeHangshi = new LikeHangshi();
                         likeHangshi.setHangshi(hangshi);
                         likeHangshi.setUser(user);
