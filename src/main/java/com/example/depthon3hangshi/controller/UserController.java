@@ -1,5 +1,6 @@
 package com.example.depthon3hangshi.controller;
 
+import com.example.depthon3hangshi.dto.ResponseDto;
 import com.example.depthon3hangshi.dto.UserRequest;
 import com.example.depthon3hangshi.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +16,7 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/login")
-    public void CreateUser(@RequestBody UserRequest request){
-        userService.createUser(request);
+    public ResponseDto CreateUser(@RequestBody UserRequest request){
+        return userService.createUser(request);
     }
 }
