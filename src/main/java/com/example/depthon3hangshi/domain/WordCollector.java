@@ -11,4 +11,8 @@ public enum WordCollector {
         this.name = name;
     }
 
+    public static String getRandom() {
+        return values()[(int) (Math.random() * values().length)].name;
+    }
+
 }
