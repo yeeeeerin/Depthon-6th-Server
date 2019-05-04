@@ -19,6 +19,8 @@ public class HangshiDto {
 
     private Integer likeCount;
 
+    private String username;
+
     private boolean like;
 
     private HangshiDto(Long id,
@@ -26,6 +28,7 @@ public class HangshiDto {
                        String wordSecond,
                        String wordThird,
                        Integer likeCount,
+                       String username,
                        boolean like) {
 
         this.id = id;
@@ -33,6 +36,7 @@ public class HangshiDto {
         this.wordSecond = wordSecond;
         this.wordThird = wordThird;
         this.likeCount = likeCount;
+        this.username = username;
         this.like = like;
     }
 
@@ -42,6 +46,7 @@ public class HangshiDto {
                 hangshi.getWordSecond(),
                 hangshi.getWordThird(),
                 hangshi.getLikeCount(),
+                hangshi.getUser().getName(),
                 like);
     }
 
