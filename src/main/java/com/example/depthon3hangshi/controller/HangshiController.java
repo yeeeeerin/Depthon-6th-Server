@@ -38,13 +38,13 @@ public class HangshiController {
         return ResponseDto.of(HttpStatus.OK, "success");
     }
 
-    @GetMapping("/like")
+    @PostMapping("/like")
     public ResponseDto like(@RequestBody LikeRequest likeRequest) {
         hangshiService.likeHangshi(likeRequest);
         return ResponseDto.of(HttpStatus.OK, "success");
     }
 
-    @GetMapping("/unlike")
+    @PostMapping("/unlike")
     public ResponseDto unLike(@RequestBody LikeRequest likeRequest) {
         hangshiService.unLikeHangshi(likeRequest);
         return ResponseDto.of(HttpStatus.OK, "success");
