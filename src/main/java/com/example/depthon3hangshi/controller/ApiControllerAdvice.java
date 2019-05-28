@@ -1,6 +1,7 @@
 package com.example.depthon3hangshi.controller;
 
 import com.example.depthon3hangshi.dto.ResponseDto;
+import com.example.depthon3hangshi.exception.CanNotUnlikeException;
 import com.example.depthon3hangshi.exception.ExistLikeException;
 import com.example.depthon3hangshi.exception.ExistUserException;
 import com.example.depthon3hangshi.exception.NotFoundUserException;
@@ -27,5 +28,11 @@ public class ApiControllerAdvice {
     @ResponseStatus(HttpStatus.NOT_ACCEPTABLE)
     public ResponseDto handleExistLikeException() {
         return ResponseDto.of(HttpStatus.NOT_ACCEPTABLE, "Exist Like!!");
+    }
+
+    @ExceptionHandler(CanNotUnlikeException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseDto handleCanNotUnlikeException() {
+        return ResponseDto.of(HttpStatus.BAD_REQUEST, "Can Not Unlike!!");
     }
 }

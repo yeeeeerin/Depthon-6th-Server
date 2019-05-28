@@ -8,6 +8,7 @@ import com.example.depthon3hangshi.dto.HangshiDto;
 import com.example.depthon3hangshi.dto.HangshiRequest;
 import com.example.depthon3hangshi.dto.HangshiResponse;
 import com.example.depthon3hangshi.dto.LikeRequest;
+import com.example.depthon3hangshi.exception.CanNotUnlikeException;
 import com.example.depthon3hangshi.exception.ExistLikeException;
 import com.example.depthon3hangshi.exception.NotFoundUserException;
 import com.example.depthon3hangshi.repository.HangshiRepository;
@@ -115,17 +116,20 @@ public class HangshiServiceImpl implements HangshiService {
     @Override
     @Transactional
     public void unLikeHangshi(LikeRequest likeRequest) {
-        hangshiRepository.findById(likeRequest.getHangshiId()).ifPresent(
-                hangshi -> {
-                    userRepository.findById(likeRequest.getUserId()).ifPresent(user -> {
-                        likeRepository.findByHangshiAndUser(hangshi, user).ifPresent(like -> {
-                            likeRepository.delete(like);
-                            hangshi.setLikeCount(hangshi.getLikeCount() - 1);
-                        });
-                    });
+        
+        Hangshi hangshi = hangshiRepository.findById(likeRequest.getHangshiId())
+                .orElseThrow(NotFoundUserException::new);
 
-                }
-        );
+        User user = userRepository.findById(likeRequest.getUserId())
+                .orElseThrow(NotFoundUserException::new);
+
+        LikeHangshi likeHangshi = likeRepository.findByHangshiAndUser(hangshi, user)
+                .orElseThrow(CanNotUnlikeException::new);
+
+        likeRepository.delete(likeHangshi);
+
+        if (hangshi.getLikeCount() > 0)
+            hangshi.setLikeCount(hangshi.getLikeCount() - 1);
     }
 
 
